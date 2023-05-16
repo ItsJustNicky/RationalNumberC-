@@ -13,7 +13,23 @@ namespace cosc326 {
 	}
 
 	Integer::Integer(const std::string& s) {
-	
+		if (s.empty()) {
+			stringValue = "0";
+		} else {
+			if (s.rfind("-",0) == 0) {
+				posOrNeg = 2;
+				stringValue = s.substr(1);
+			} else if (s.rfind("+",0) == 0) {
+				posOrNeg = 1;
+				stringValue = s.substr(1);
+			} else {
+				posOrNeg = 0;
+			}
+			if (posOrNeg = 2) {
+				stringValue = "-"+stringValue;
+			}
+
+		}
 	}
 
 

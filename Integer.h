@@ -12,6 +12,8 @@ namespace cosc326 {
 
 	private:
 		int value;
+		std::string stringValue;
+		int posOrNeg; // 0 if neither, 1 if positive, 2 is negative.
 
 	public:
 
@@ -21,7 +23,7 @@ namespace cosc326 {
 
 		Integer();                             // Integer i; // Default constructor declaration 
 		Integer(const Integer& i);             // Integer j(i); // Copy integer constructor declaration
-		Integer(const std::string& s);         // Integer k("123");
+		Integer(const std::string& s);         // Integer k("123"); //  Constructor that takes a string of digits
 
 		~Integer();
 
