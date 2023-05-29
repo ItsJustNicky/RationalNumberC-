@@ -33,15 +33,12 @@ namespace cosc326 {
 	}
 
 	Integer& Integer::operator=(const Integer& i) {
+		value =  i.value;
 		return *this;
 	}
 
 	Integer Integer::operator-() const {
-		Integer clone = Integer(*this);
-		*this - clone;
-		*this - clone;
-
-		return Integer(*this);
+		return -Integer(*this);
 	}
 
 	Integer Integer::operator+() const {
@@ -49,27 +46,27 @@ namespace cosc326 {
 	}
 
 	Integer& Integer::operator+=(const Integer& i) {
-		*this + Integer(i);
+		value += i.value;
 		return *this;
 	}
 
 	Integer& Integer::operator-=(const Integer& i) {
-		*this - Integer(i);
+		value += i.value;
 		return *this;
 	}
 
 	Integer& Integer::operator*=(const Integer& i) {
-		*this * Integer(i);
+		value *= i.value;
 		return *this;
 	}
 
 	Integer& Integer::operator/=(const Integer& i) {
-		*this / Integer(i);
+		value /= i.value;
 		return *this;
 	}
 
 	Integer& Integer::operator%=(const Integer& i) {
-		*this % Integer(i);
+		value %= i.value;
 		return *this;
 	}
 
@@ -87,56 +84,66 @@ namespace cosc326 {
 		return out;	}
 
 	Integer operator*(const Integer& lhs, const Integer& rhs) {
-		return lhs;
+		Integer out;
+		out.operator*=(rhs);
+		out.operator*=(lhs);
+		return out;
 	}
 
 	Integer operator/(const Integer& lhs, const Integer& rhs) {
-		return lhs;
+		Integer out;
+		out.operator/=(rhs);
+		out.operator/=(lhs);
+		return out;
 	}
 
 	Integer operator%(const Integer& lhs, const Integer& rhs) {
-		return lhs;
+		Integer out;
+		out.operator%=(rhs);
+		out.operator%=(lhs);
+		return out;
 	}
 
-
 	std::ostream& operator<<(std::ostream& os, const Integer& i) {
+		os << i.getValue();
 		return os;
 	}
 
 	std::istream& operator>>(std::istream& is, Integer& i) {
+		int value;
+		is >> value;
 		return is;
 	}
 
 	bool operator<(const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() < rhs.getValue();
 	}
 
 	bool operator> (const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() > rhs.getValue();
 	}
 
 	bool operator<=(const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() <= rhs.getValue();
 	}
 
 	bool operator>=(const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() >= rhs.getValue();
 	}
 
 	bool operator==(const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() == rhs.getValue();
 	}
 
 	bool operator!=(const Integer& lhs, const Integer& rhs) {
-		return true;
+		return lhs.getValue() != rhs.getValue();
 	}
-
 
 	Integer gcd(const Integer& a, const Integer& b) {
-		return a;
+		if (operator==(b, Integer(0)) ) {
+			return a;
+		}
+		return gcd(b, operator%(a, b));
 	}
-
-
-
 
 }
