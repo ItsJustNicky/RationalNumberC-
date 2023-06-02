@@ -11,6 +11,10 @@
 namespace cosc326 {
 
 	class Rational {
+
+	private:
+		int value;
+		std::string stringValue;
     
 	public:
 

@@ -3,11 +3,15 @@
 namespace cosc326 {
 
 	Rational::Rational() {
-
+		value = 0;
 	}
 
 	Rational::Rational(const std::string& str) {
-
+		if (s.empty()) {
+			value = 0;
+		} else {
+			value = std::stoi(s);
+		}
 	}
 
 	Rational::Rational(const Rational& r) {

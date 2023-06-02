@@ -5,20 +5,22 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+using namespace std;
 
 namespace cosc326 {
 
 	class Integer {
 
 	private:
-		int value;
+		vector <int> value;
 		std::string stringValue;
-		int posOrNeg; // 0 if neither, 1 if positive, 2 is negative.
+		bool posOrNeg; // 0 if neither, 1 if positive, 2 is negative.
 
 	public:
 
-	    int getValue() const {
-        return value;
+	    vector<int>& getValue() {
+			return value;
         }
 
 		Integer();                             // Integer i; // Default constructor declaration 
@@ -30,8 +32,8 @@ namespace cosc326 {
 		Integer& operator=(const Integer& i);  // j = i;
 
 		// Unary operators
-		Integer operator-() const;                   // -j;
-		Integer operator+() const;                   // +j;
+		Integer operator-();                   // -j;
+		Integer operator+();                   // +j;
 
 		// Arithmetic assignment operators
 		Integer& operator+=(const Integer& i); // j += i;
@@ -43,7 +45,8 @@ namespace cosc326 {
 		// lhs < rhs -- a 'friend' means operator isn't a member, but can access the private parts of the class.
 		// You may need to make some other functions friends, but do so sparingly.
 		friend bool operator<(const Integer& lhs, const Integer& rhs);
-
+		//friend std::ostream& operator<<(std::ostream& os, const Integer& i);
+	
 	private:
 		// Can add internal storage or methods here
 	};
