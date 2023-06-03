@@ -72,37 +72,61 @@ namespace cosc326 {
 	}
 
 	/* Takes a value and adds it to the value */
-	Integer& Integer::operator+=(const Integer& i) {
+	// Integer& Integer::operator+=(const Integer& i) {
 
-    	size_t maxLength = std::max(value.size(), i.value.size());
-    	value.resize(maxLength, 0); // Resize the vector if necessary
+    // 	size_t maxLength = std::max(value.size(), i.value.size());
+    // 	value.resize(maxLength, 0); // Resize the vector if necessary
 
-		// check which list is greater, set max size to that one
+	// 	// check which list is greater, set max size to that one
 
-		// blank pad the one that is smaller so they are the same size
+	// 	// blank pad the one that is smaller so they are the same size
 
-		// add one blank 0 to the front to them both
+	// 	// add one blank 0 to the front to them both
 
-
-    	int carry = 0;
-    	for (size_t x = 0; x < maxLength; ++x) {
-
-			// if the sum is greater then 9 add 1 to value[x-1]
-
-        	int digitSum = value[x] + carry; // Add carry from the previous digit
-        	if (x < i.value.size()) {
-            	digitSum += i.value[x];
-        	}
-
-        	value[x] = digitSum % 10; // Store the result in the current digit
-        	carry = digitSum / 10; // Calculate the carry for the next digit
-    	}
-
-    	if (carry > 0) {
-        	value.push_back(carry); // If there is a carry after all digits, add a new digit
-    		}
+    // 	int carry = 0;
+    // 	for (size_t x = 0; x < maxLength; ++x) {
+	// 		// if the sum is greater then 9 add 1 to value[x-1]
+    //     	int digitSum = value[x] + carry; // Add carry from the previous digit
+    //     	if (x < i.value.size()) {
+    //         	digitSum += i.value[x];
+    //     	}
+    //     	value[x] = digitSum % 10; // Store the result in the current digit
+    //     	carry = digitSum / 10; // Calculate the carry for the next digit
+    // 	}
+    // 	if (carry > 0) {
+    //     	value.push_back(carry); // If there is a carry after all digits, add a new digit
+    // 		}
 		
-    	return *this;
+    // 	return *this;
+	// }
+
+	Integer& Integer::operator+=(const Integer& i) {
+		
+		Integer copyOfI = Integer(i);
+		int maxSize;
+
+		if (i.value.size() >= value.size()) {
+			maxSize = i.value.size() + 1;
+		} else if (value.size()> i.value.size()) {
+			maxSize = value.size() + 1;
+		}
+		size_t noAddI = maxSize - i.value.size();
+		size_t noAddValue = maxSize - value.size(); 
+		
+		copyOfI.value.insert(copyOfI.value.begin(), noAddI, 0);
+		value.insert(value.begin(), noAddValue, 0);
+
+		for (size_t x = 0; x < maxSize; x++) {
+			if (value[x] + copyOfI.value[x] > 9) {
+				value[x] = value[x] - 10;
+				value[x-1] = value[x-1] + 1;
+			}
+			value[x] = value[x] + copyOfI.value[x];
+		}
+		if (value[0] == 0) {
+			value.erase(value.begin());
+		}
+		return *this;
 	}
 
 	/* Takes two values and returns the value of one value subtracted from the other */
