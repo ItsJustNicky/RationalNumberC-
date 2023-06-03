@@ -246,7 +246,7 @@ namespace cosc326 {
 
 	/* Takes two values returns True if they are equal */
 	bool operator==(const Integer& lhs, const Integer& rhs) {
-		if (lhs.value > rhs.value.get);
+	//	if (lhs.value > rhs.value.get);
 	//	return lhs.getValue() == rhs.getValue();
 	
 
