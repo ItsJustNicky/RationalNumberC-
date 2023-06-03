@@ -4,7 +4,8 @@ namespace cosc326 {
 
 	/* Sets the default value of Integer to 0 */
 	Integer::Integer() {
-		value = {0};
+		posOrNeg = true;
+		value.push_back(0);
 	}
 
 	/* Creates a copy of Integer */
@@ -13,37 +14,45 @@ namespace cosc326 {
 	}
 
 	/* Takes in a string and passes each individual item to a Integer Vector */
+	/* Copied straight from chatGPT might wanna change this at some point */
 	Integer::Integer(const std::string& s) {
 		std::string temp;
-		if (s.empty()) {
-			value[0] = 0;
-		} else {
-			posOrNeg = true;
-			if(s[0] == '+') {
-				posOrNeg = true;
-				temp = s.substr(1);
-			} else if (s[0] == '-') {
+    	if (s.empty()) {
+        	posOrNeg = true;
+        	value.push_back(0);
+    	} else {
+			if (s[0] == '-') {
 				posOrNeg = false;
 				temp = s.substr(1);
+			} else if (s[0] == '+') {
+				posOrNeg = true;
+				temp = s.substr(1);
+			} else {
+				temp = s;
+				posOrNeg = true;
 			}
-			for (char i : temp) {
-				value.push_back(std::stoi(std::string(1, i)));
-			}
-		}
+        	for (char c : temp) {
+            	if (std::isdigit(c)) {
+                	value.push_back(c - '0');
+            	} else {
+                	// Handle error: invalid input string
+                	value.clear();
+                	posOrNeg = true;
+                	value.push_back(0);
+                	break;
+            	}
+        	}
+    	}
 	}
 
 	/* Deconstructor */
 	Integer::~Integer() {
 	}
 
-	/* Takes a value and returns what it is equal to*/
+	/* Takes a value and set value to that value */
 	Integer& Integer::operator=(const Integer& i) {
-		//if (posOrNeg == true) {
-		value =  i.value;
-		//} else if (posOrNeg == false) {
-		//	value = i.value;
-		//	value.insert(value.begin(), "-");
-		//}
+		value.clear();
+		value = i.value;
 		return *this;
 	}
 
@@ -55,34 +64,45 @@ namespace cosc326 {
 
 	/* Takes a value and returns it as a positive */
 	Integer Integer::operator+() {
-		this->posOrNeg=true;
-		return Integer(*this);
+		Integer result = *this;
+		if (!result.posOrNeg) {
+		result.posOrNeg = true;
+		}
+		return result;
 	}
 
 	/* Takes a value and adds it to the value */
 	Integer& Integer::operator+=(const Integer& i) {
-		if(value.size() < i.value.size()){
-			int iValueLength = i.value.size();
-			int valueLength = value.size();
-			
-			while (valueLength < iValueLength + 1) {
-				valueLength += 1;
-				value.insert(value.begin(), 0);
-			}
-		}	
-		for (size_t x = value.size()-1; x > 0; x--) {
-				if (value[x]+i.value[x] > 9) {
-					value[x-1] = value[x-1] + 1;
-					value[x]=value[x]+i.value[x]-10;
-				}
-				value[x]=value[x]+i.value[x];
+
+    	size_t maxLength = std::max(value.size(), i.value.size());
+    	value.resize(maxLength, 0); // Resize the vector if necessary
+
+		// check which list is greater, set max size to that one
+
+		// blank pad the one that is smaller so they are the same size
+
+		// add one blank 0 to the front to them both
+
+
+    	int carry = 0;
+    	for (size_t x = 0; x < maxLength; ++x) {
+
+			// if the sum is greater then 9 add 1 to value[x-1]
+
+        	int digitSum = value[x] + carry; // Add carry from the previous digit
+        	if (x < i.value.size()) {
+            	digitSum += i.value[x];
+        	}
+
+        	value[x] = digitSum % 10; // Store the result in the current digit
+        	carry = digitSum / 10; // Calculate the carry for the next digit
     	}
 
-		if (value[0] == 0) {
-			value.erase(value.begin());
-		}
-
-		return *this;
+    	if (carry > 0) {
+        	value.push_back(carry); // If there is a carry after all digits, add a new digit
+    		}
+		
+    	return *this;
 	}
 
 	/* Takes two values and returns the value of one value subtracted from the other */
@@ -112,8 +132,7 @@ namespace cosc326 {
 				}else{
 					value[x]=value[x]-copyOfi.value[x];
     		}
-		}
-				
+		}		
 
 		if (value[0] == 0) {
 			value.erase(value.begin());
@@ -142,9 +161,10 @@ namespace cosc326 {
 
 	/* Takes two values and preforms addition */
 	Integer operator+(const Integer& lhs, const Integer& rhs) {
-		Integer left = lhs;
-		Integer right = rhs;
-		return left += right;
+		Integer out;
+		out.operator+=(rhs);
+		out.operator+=(lhs);
+		return out;
 	}
 
 	/* Takes two values and removes one from the other */
@@ -181,15 +201,17 @@ namespace cosc326 {
 
 	/* Allows for Integers to outputted to a stream */
 	std::ostream& operator<<(std::ostream& os, const Integer& i) {
-    	os<< "helloworld";
-	//os << i.getValue();
-	//if (i.posOrNeg == false) {
-    //    os << '-';
-    //}
-    //for (const auto& digit : i.value) {
-     //   os << digit;
-    //}
-    	return os;
+	if(i.getValue().empty() == false) {
+		if (i.posOrNeg == false) {
+			os << '-';
+		}
+		for (const auto& digit : i.getValue()) {
+			os << digit;
+		}
+	} else {
+		os << '0';
+		}
+	return os;
 }
 
 	

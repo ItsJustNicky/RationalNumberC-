@@ -15,11 +15,12 @@ namespace cosc326 {
 	private:
 		vector <int> value;
 		std::string stringValue;
-		bool posOrNeg; // 0 if neither, 1 if positive, 2 is negative.
 
 	public:
 
-	    vector<int>& getValue() {
+		bool posOrNeg; // true is positive, false is negative
+
+	    const std::vector<int>& getValue() const {
 			return value;
         }
 
@@ -68,6 +69,6 @@ namespace cosc326 {
 	bool operator!=(const Integer& lhs, const Integer& rhs); // lhs != rhs
 
 	Integer gcd(const Integer& a, const Integer& b);  // i = gcd(a, b);
-}
+};
 
 #endif

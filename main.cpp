@@ -10,16 +10,19 @@ using namespace cosc326;
 
 int main() {
 
-	Integer sum;
+	//Integer sum;
 
 	std::cout << "Kia ora World" << std::endl;
-	//cosc326::Integer myInteger;
-	//cosc326::Integer myIntegerCopy(myInteger);  // Create a copy of myInteger using the copy constructor	
-	std::cout << "eeeee" << std::endl;
+	cosc326::Integer myInteger;
+	cosc326::Integer myIntegerCopy(myInteger);  // Create a copy of myInteger using the copy constructor	
+	std::cout << myInteger << std::endl; // Print myInteger using the overloaded operator<<
+	// std::cout << "eeeee" << std::endl;
 	Integer a = Integer("5");
-	Integer b = Integer("10");
-	std::cout << "AHHHHH" << std::endl;
-	sum = a + b;
-	std::cout << "eeeee" << std::endl;
+	std::cout << a << std::endl;
+	Integer b = Integer("1");
+	std::cout << b << std::endl;
+	Integer sum = a + b;
+	std::cout << sum << std::endl;
+	// std::cout << "eeeee" << std::endl;
 	return 0;
 }
