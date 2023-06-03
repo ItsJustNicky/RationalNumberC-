@@ -58,8 +58,8 @@ namespace cosc326 {
 
 	/* Takes a value and returns it as a negative */
 	Integer Integer::operator-() {
-		this->posOrNeg=false;
-		return -Integer(*this);
+		Integer result = *this;
+		return result;
 	}
 
 	/* Takes a value and returns it as a positive */
@@ -71,35 +71,6 @@ namespace cosc326 {
 		return result;
 	}
 
-	/* Takes a value and adds it to the value */
-	// Integer& Integer::operator+=(const Integer& i) {
-
-    // 	size_t maxLength = std::max(value.size(), i.value.size());
-    // 	value.resize(maxLength, 0); // Resize the vector if necessary
-
-	// 	// check which list is greater, set max size to that one
-
-	// 	// blank pad the one that is smaller so they are the same size
-
-	// 	// add one blank 0 to the front to them both
-
-    // 	int carry = 0;
-    // 	for (size_t x = 0; x < maxLength; ++x) {
-	// 		// if the sum is greater then 9 add 1 to value[x-1]
-    //     	int digitSum = value[x] + carry; // Add carry from the previous digit
-    //     	if (x < i.value.size()) {
-    //         	digitSum += i.value[x];
-    //     	}
-    //     	value[x] = digitSum % 10; // Store the result in the current digit
-    //     	carry = digitSum / 10; // Calculate the carry for the next digit
-    // 	}
-    // 	if (carry > 0) {
-    //     	value.push_back(carry); // If there is a carry after all digits, add a new digit
-    // 		}
-		
-    // 	return *this;
-	// }
-
 	Integer& Integer::operator+=(const Integer& i) {
 		
 		Integer copyOfI = Integer(i);
@@ -110,60 +81,65 @@ namespace cosc326 {
 		} else if (value.size()> i.value.size()) {
 			maxSize = value.size() + 1;
 		}
+
 		size_t noAddI = maxSize - i.value.size();
 		size_t noAddValue = maxSize - value.size(); 
 		
 		copyOfI.value.insert(copyOfI.value.begin(), noAddI, 0);
 		value.insert(value.begin(), noAddValue, 0);
 
-		for (size_t x = 0; x < maxSize; x++) {
-			if (value[x] + copyOfI.value[x] > 9) {
-				value[x] = value[x] - 10;
-				value[x-1] = value[x-1] + 1;
-			}
-			value[x] = value[x] + copyOfI.value[x];
-		}
-		if (value[0] == 0) {
-			value.erase(value.begin());
-		}
-		return *this;
+   		for (int x = maxSize - 1; x >= 0; x--) {
+        	int digitSum = value[x] + copyOfI.value[x];
+        	if (digitSum > 9) {
+            	value[x] = digitSum % 10;
+            	if (x > 0) {
+                	value[x - 1] += digitSum / 10;
+            	}
+        	} else {
+            	value[x] = digitSum;
+        	}
+    	}
+
+    	if (value[0] == 0) {
+        	value.erase(value.begin());
+    	}
+    	return *this;
 	}
 
 	/* Takes two values and returns the value of one value subtracted from the other */
 	Integer& Integer::operator-=(const Integer& i) {
-			Integer copyOfi = Integer(i);
-				if(value.size() < i.value.size()){
-			int iValueLength = i.value.size();
-			int valueLength = value.size();
-			
-			while (valueLength < iValueLength + 1) {
-				valueLength += 1;
-				value.insert(value.begin(), 0);
-			}
-		}else if(value.size() < i.value.size()){
-			int iValueLength = i.value.size();
-			int valueLength = value.size();
-			
-			while (valueLength > iValueLength + 1) {
-				iValueLength += 1;
-				copyOfi.value.insert(copyOfi.value.begin(), 0);
-			}
-		}	
-		for (size_t x = value.size()-1; x > 0; x--) {
-				if (value[x]<copyOfi.value[x] ) {
-					value[x-1] = value[x-1] -1;
-					value[x]=value[x]+10-copyOfi.value[x];
-				}else{
-					value[x]=value[x]-copyOfi.value[x];
-    		}
-		}		
+    Integer copyOfI = Integer(i);
+    int maxSize;
 
-		if (value[0] == 0) {
-			value.erase(value.begin());
-		}
+    if (i.value.size() >= value.size()) {
+        maxSize = i.value.size();
+        value.insert(value.begin(), i.value.size() - value.size(), 0);
+    } else {
+        maxSize = value.size();
+        copyOfI.value.insert(copyOfI.value.begin(), value.size() - i.value.size(), 0);
+    }
 
-		return *this;
-	}
+    int borrow = 0;
+    for (int x = maxSize - 1; x >= 0; x--) {
+        int digitDiff = value[x] - borrow - copyOfI.value[x];
+        if (digitDiff < 0) {
+            value[x] = digitDiff + 10;
+            borrow = 1;
+        } else {
+            value[x] = digitDiff;
+            borrow = 0;
+        }
+    }
+
+    // Remove leading zeros if necessary
+    while (value.size() > 1 && value[0] == 0) {
+        value.erase(value.begin());
+    }
+
+    return *this;
+}
+
+
 
 	/* Takes two values and returns one multiplied by the other */
 	Integer& Integer::operator*=(const Integer& i) {
@@ -270,8 +246,9 @@ namespace cosc326 {
 
 	/* Takes two values returns True if they are equal */
 	bool operator==(const Integer& lhs, const Integer& rhs) {
+		if (lhs.value > rhs.value.get);
 	//	return lhs.getValue() == rhs.getValue();
-	}
+	
 
 	/* Takes two values returns True if they are not equal */
 	bool operator!=(const Integer& lhs, const Integer& rhs) {
