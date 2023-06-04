@@ -14,15 +14,15 @@ int main() {
 
 	std::cout << "Kia ora World" << std::endl;
 	cosc326::Integer myInteger;
-	Integer a = Integer("-4");
+	Integer a = Integer("10");
 	std::cout << a << std::endl;
-	Integer b = Integer("-3");
+	Integer b = Integer("11");
 	std::cout << b << std::endl;
-	Integer sum = a - b;
+	Integer sum = a + b;
 	std::cout << sum << std::endl;
-	bool hmm = a == b;
-	std::cout << "----" << std::endl;
-	std::cout << hmm << std::endl;
+	//bool hmm = a == b;
+	//std::cout << "----" << std::endl;
+	//std::cout << hmm << std::endl;
 	// std::cout << "eeeee" << std::endl;
 	return 0;
 }

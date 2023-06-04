@@ -120,14 +120,17 @@ namespace cosc326 {
         copyOfI.value.insert(copyOfI.value.begin(), value.size() - i.value.size(), 0);
     }
 
+    if (operator<(copyOfI, *this)) {
+        posOrNeg = !posOrNeg;
+        swap(copyOfI, *this);
+    }
+
     for (int x = maxSize - 1; x >= 0; x--) {
-		if (copyOfI.value[x] - value[x] < 0) {
-			value[x-1] = value[x-1] + 1;
-			value[x] = copyOfI.value[x] - value[x];
-			value[x] = value[x] + 10;
-		} else {
-        	value[x] = copyOfI.value[x] - value[x];
-		}
+        if (value[x] < copyOfI.value[x]) {
+            value[x - 1] -= 1;
+            value[x] += 10;
+        }
+        value[x] -= copyOfI.value[x];
     }
 
     if (value[0] == 0) {
@@ -184,19 +187,9 @@ namespace cosc326 {
 	/* Takes two values and removes one from the other */
 	Integer operator-(const Integer& lhs, const Integer& rhs) {
 		Integer out;
-		Integer add;
-		if (lhs.posOrNeg && rhs.posOrNeg) {
-			out.operator-=(lhs);
-			out.operator-=(rhs);		
-		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
-			add.operator-=(lhs);
-			out.operator-=(rhs);
-			out = out + add;
-		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
-			out.operator-=(lhs);
-			add.operator-=(rhs);
-			out = out + add;
-		}
+		out.operator-=(rhs);
+		out.operator-=(lhs);		
+
 		return out;	
 		}
 
