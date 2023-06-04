@@ -106,6 +106,7 @@ namespace cosc326 {
     	return *this;
 	}
 
+
 	/* Takes two values and returns the value of one value subtracted from the other */
 	Integer& Integer::operator-=(const Integer& i) {
     Integer copyOfI = Integer(i);
@@ -119,26 +120,22 @@ namespace cosc326 {
         copyOfI.value.insert(copyOfI.value.begin(), value.size() - i.value.size(), 0);
     }
 
-    int borrow = 0;
     for (int x = maxSize - 1; x >= 0; x--) {
-        int digitDiff = value[x] - borrow - copyOfI.value[x];
-        if (digitDiff < 0) {
-            value[x] = digitDiff + 10;
-            borrow = 1;
-        } else {
-            value[x] = digitDiff;
-            borrow = 0;
-        }
+		if (copyOfI.value[x] - value[x] < 0) {
+			value[x-1] = value[x-1] + 1;
+			value[x] = copyOfI.value[x] - value[x];
+			value[x] = value[x] + 10;
+		} else {
+        	value[x] = copyOfI.value[x] - value[x];
+		}
     }
 
-    // Remove leading zeros if necessary
-    while (value.size() > 1 && value[0] == 0) {
+    if (value[0] == 0) {
         value.erase(value.begin());
     }
-
-    return *this;
-}
-
+    
+	return *this;
+	}
 
 
 	/* Takes two values and returns one multiplied by the other */
@@ -160,18 +157,46 @@ namespace cosc326 {
 	}
 
 	/* Takes two values and preforms addition */
+
+	// doesnt go to negative numbers, need to fix.
 	Integer operator+(const Integer& lhs, const Integer& rhs) {
 		Integer out;
-		out.operator+=(rhs);
-		out.operator+=(lhs);
+		Integer minus;
+		if (lhs.posOrNeg && rhs.posOrNeg) {
+			out.operator+=(lhs);
+			out.operator+=(rhs);
+		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			out.operator+=(lhs);
+			minus.operator+=(rhs);
+			out = out - minus;
+		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
+			minus.operator+=(lhs);
+			out.operator+=(rhs);
+			out = out - minus;
+		// One below I dont think is right 
+		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
+			out.operator-=(lhs);
+			out.operator+=(rhs);
+		}
 		return out;
 	}
 
 	/* Takes two values and removes one from the other */
 	Integer operator-(const Integer& lhs, const Integer& rhs) {
 		Integer out;
-		out.operator-=(rhs);
-		out.operator-=(lhs);
+		Integer add;
+		if (lhs.posOrNeg && rhs.posOrNeg) {
+			out.operator-=(lhs);
+			out.operator-=(rhs);		
+		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			add.operator-=(lhs);
+			out.operator-=(rhs);
+			out = out + add;
+		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
+			out.operator-=(lhs);
+			add.operator-=(rhs);
+			out = out + add;
+		}
 		return out;	
 		}
 
@@ -222,37 +247,78 @@ namespace cosc326 {
 		return is;
 	}
 
-
-
 	/* Takes two values if rhs is greater then lhs returns True, otherwise returns False */
 	bool operator<(const Integer& lhs, const Integer& rhs) {
-	//	return lhs.getValue() < rhs.getValue();
+		if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return true;
+		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false;
+		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
+			return lhs.getValue() > rhs.getValue();
+		} else {
+			return lhs.getValue() < rhs.getValue();
+		}
 	}
 
 	/* Takes two values if lhs is greater then rhs returns True, otherwise returns False */
 	bool operator> (const Integer& lhs, const Integer& rhs) {
-	//	return lhs.getValue() > rhs.getValue();
+		if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return true;
+		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return false;
+		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
+			return lhs.getValue() < rhs.getValue();
+		} else {
+			return lhs.getValue() > rhs.getValue();
+		}
 	}
 
 	/* Takes two values if rhs is less then or equal to lhs returns True, otherwise returns False */
 	bool operator<=(const Integer& lhs, const Integer& rhs) {
-	//	return lhs.getValue() <= rhs.getValue();
+		if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return true;
+		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false; 
+		} else if (!lhs.posOrNeg && ! rhs.posOrNeg) {
+			return lhs.getValue() >= rhs.getValue();
+		} else {
+			return lhs.getValue() <= rhs.getValue();
+		}
 	}
 
 	/* Takes two values if lhs is greater then or equal to rhs returns True, otherwise returns False */
 	bool operator>=(const Integer& lhs, const Integer& rhs) {
-	//	return lhs.getValue() >= rhs.getValue();
+		if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return true;
+		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return false;
+		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
+			return lhs.getValue() <= rhs.getValue();
+		} else {
+			return lhs.getValue() >= rhs.getValue();
+		}
 	}
 
 	/* Takes two values returns True if they are equal */
 	bool operator==(const Integer& lhs, const Integer& rhs) {
-	//	if (lhs.value > rhs.value.get);
-	//	return lhs.getValue() == rhs.getValue();
-	
+		if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false;
+		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return false;
+		} else {
+			return lhs.getValue() == rhs.getValue();
+		}
+	}
 
 	/* Takes two values returns True if they are not equal */
 	bool operator!=(const Integer& lhs, const Integer& rhs) {
-	//	return lhs.getValue() != rhs.getValue();
+		if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return true;
+		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return true;
+		} else {
+			return lhs.getValue() != rhs.getValue();
+		}
 	}
 
 	/* Takes two values and returns the greatest common divisor */
