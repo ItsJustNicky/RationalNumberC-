@@ -103,6 +103,7 @@ namespace cosc326 {
     	if (value[0] == 0) {
         	value.erase(value.begin());
     	}
+
     	return *this;
 	}
 
@@ -162,6 +163,7 @@ namespace cosc326 {
 	/* Takes two values and preforms addition */
 
 	// doesnt go to negative numbers, need to fix.
+	// converts it to negative but doesnt set posOrNeg to negative.
 	Integer operator+(const Integer& lhs, const Integer& rhs) {
 		Integer out;
 		Integer minus;
@@ -176,7 +178,6 @@ namespace cosc326 {
 			minus.operator+=(lhs);
 			out.operator+=(rhs);
 			out = out - minus;
-		// One below I dont think is right 
 		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
 			out.operator-=(lhs);
 			out.operator+=(rhs);

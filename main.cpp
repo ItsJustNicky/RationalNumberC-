@@ -14,9 +14,9 @@ int main() {
 
 	std::cout << "Kia ora World" << std::endl;
 	cosc326::Integer myInteger;
-	Integer a = Integer("10");
+	Integer a = Integer("-10");
 	std::cout << a << std::endl;
-	Integer b = Integer("11");
+	Integer b = Integer("-20");
 	std::cout << b << std::endl;
 	Integer sum = a + b;
 	std::cout << sum << std::endl;
