@@ -14,7 +14,6 @@ namespace cosc326 {
 	}
 
 	/* Takes in a string and passes each individual item to a Integer Vector */
-	/* Copied straight from chatGPT might wanna change this at some point */
 	Integer::Integer(const std::string& s) {
 		std::string temp;
     	if (s.empty()) {
@@ -76,18 +75,20 @@ namespace cosc326 {
 		Integer copyOfI = Integer(i);
 		int maxSize;
 
+		// sets max size to what ever array is bigger
 		if (i.value.size() >= value.size()) {
 			maxSize = i.value.size() + 1;
 		} else if (value.size()> i.value.size()) {
 			maxSize = value.size() + 1;
 		}
 
+		// 0 pads the array
 		size_t noAddI = maxSize - i.value.size();
-		size_t noAddValue = maxSize - value.size(); 
-		
+		size_t noAddValue = maxSize - value.size(); 		
 		copyOfI.value.insert(copyOfI.value.begin(), noAddI, 0);
 		value.insert(value.begin(), noAddValue, 0);
 
+		// Does the math
    		for (int x = maxSize - 1; x >= 0; x--) {
         	int digitSum = value[x] + copyOfI.value[x];
         	if (digitSum > 9) {
@@ -100,6 +101,7 @@ namespace cosc326 {
         	}
     	}
 
+		// If 0 in front gets rid of it.
     	if (value[0] == 0) {
         	value.erase(value.begin());
     	}
@@ -164,6 +166,7 @@ namespace cosc326 {
 
 	// doesnt go to negative numbers, need to fix.
 	// converts it to negative but doesnt set posOrNeg to negative.
+	// might need to change how it is getting passed in idk.
 	Integer operator+(const Integer& lhs, const Integer& rhs) {
 		Integer out;
 		Integer minus;
