@@ -49,16 +49,20 @@ namespace cosc326 {
 	}
 
 	/* Takes a value and set value to that value */
+	/* Currently broken dosent pass negative properly*/
 	Integer& Integer::operator=(const Integer& i) {
+		
 		value.clear();
 		value = i.value;
+
 		return *this;
 	}
 
 	/* Takes a value and returns it as a negative */
 	Integer Integer::operator-() {
-		Integer result = *this;
-		return result;
+
+		this->posOrNeg = false;
+		return *this;
 	}
 
 	/* Takes a value and returns it as a positive */
@@ -71,51 +75,181 @@ namespace cosc326 {
 	}
 
 	Integer& Integer::operator+=(const Integer& i) {
-		
+
 		Integer copyOfI = Integer(i);
 		int maxSize;
 
+		bool less = false;
+		bool zeroFlip = false;
+		Integer clone;
+		if (this->valueTotal() < i.valueTotal()&& !this->posOrNeg && i.posOrNeg) {
+			less = true;
+			clone = *this;
+			*this = i;
+			clone.posOrNeg = true;
+		}
+		if (this->valueTotal() == i.valueTotal() && !this->posOrNeg && i.posOrNeg) {
+			zeroFlip = true;
+		}
 		// sets max size to what ever array is bigger
 		if (i.value.size() >= value.size()) {
 			maxSize = i.value.size() + 1;
-		} else if (value.size()> i.value.size()) {
+		}
+		else if (value.size() > i.value.size()) {
 			maxSize = value.size() + 1;
 		}
 
+
 		// 0 pads the array
 		size_t noAddI = maxSize - i.value.size();
-		size_t noAddValue = maxSize - value.size(); 		
+		size_t noAddValue = maxSize - value.size();
 		copyOfI.value.insert(copyOfI.value.begin(), noAddI, 0);
 		value.insert(value.begin(), noAddValue, 0);
 
-		// Does the math
-   		for (int x = maxSize - 1; x >= 0; x--) {
-        	int digitSum = value[x] + copyOfI.value[x];
-        	if (digitSum > 9) {
-            	value[x] = digitSum % 10;
-            	if (x > 0) {
-                	value[x - 1] += digitSum / 10;
-            	}
-        	} else {
-            	value[x] = digitSum;
-        	}
-    	}
+
+		// If both of the values are positive does simple addition.
+		if (this->posOrNeg && i.posOrNeg) {
+			for (int x = maxSize - 1; x >= 0; x--) {
+				int digitSum = value[x] + copyOfI.value[x];
+				if (digitSum > 9) {
+					value[x] = digitSum % 10;
+					if (x > 0) {
+						value[x - 1] += digitSum / 10;
+					}
+				}
+				else {
+					value[x] = digitSum;
+				}
+			}
+
+			// If both numbers are negative does simple addition and does not flip the sign.
+		}
+		else if (!this->posOrNeg && !i.posOrNeg) {
+			for (int x = maxSize - 1; x >= 0; x--) {
+				int digitSum = value[x] + copyOfI.value[x];
+				if (digitSum > 9) {
+					value[x] = digitSum % 10;
+					if (x > 0) {
+						value[x - 1] += digitSum / 10;
+					}
+				}
+				else {
+					value[x] = digitSum;
+				}
+			}
+
+			//If the first value is positive and the second value is negative preforms subtraction.
+		}
+		else if (this->posOrNeg && !i.posOrNeg) {
+			Integer posI = (i);
+			posI.posOrNeg = true;
+			for (int i = 0;i < value.size();i++) {
+				if (value[0] == 0 && value.size() != 1) {
+					value.erase(value.begin());
+				}
+			}
+			bool small = false;
+			if (*this < posI) {
+				small = true;
+				copyOfI = *this;
+				*this = i;
+
+			}
+			// Does the math
+			if (!small) {
+				
+				for (int x = maxSize - 1; x >= 0; x--) {
+
+					int digitSum = value[x] - copyOfI.value[x];
+
+					 if (digitSum < 0) {
+						value[x] = 9;
+						if (x > 0) {
+							value[x - 1]--;
+						}
+
+					}
+					else {
+						value[x] = digitSum;
+					}
+				}
+			}
+			else {
+				while (value.size() != copyOfI.value.size()) {
+					copyOfI.value.insert(copyOfI.value.begin(), 0);
+				}
+				for (int x = value.size() - 1; x >= 0; x--) {
+
+					int digitSum = value[x] - copyOfI.value[x];
+					if (digitSum < 0) {
+						value[x] = 10 + digitSum % 10;
+						if (x > 0) {
+							value[x - 1]--;
+						}
+					}
+					else {
+						value[x] = digitSum;
+					}
+				}
+				this->posOrNeg = false;
+			}
+
+
+			// If the first value is negative and the second value is positive, needs to preform
+			// subtraction when less then zero then flip if greater then zero.
+		}
+		else if (!this->posOrNeg && i.posOrNeg) {
+			if (!less) {
+				for (int x = maxSize - 1; x >= 0; x--) {
+					int digitSum = value[x] - copyOfI.value[x];
+					if (value[0] < 0) {
+						posOrNeg = true;
+					}
+					if (digitSum < 0) {
+						value[x] = digitSum + 10;
+						value[x - 1] = value[x - 1] - 1;
+					}
+					else {
+						value[x] = digitSum;
+					}
+				}
+				if (zeroFlip)this->posOrNeg = true;
+			}
+			else {
+				this->posOrNeg = true;
+				value.erase(value.begin());
+				*this -= clone;
+			}
+		}
+
 
 		// If 0 in front gets rid of it.
-    	if (value[0] == 0) {
-        	value.erase(value.begin());
-    	}
+		for (int i = 0;i < value.size();i++) {
+			if (value[0] == 0 && value.size() != 1) {
+				value.erase(value.begin());
+			}
+		}
 
-    	return *this;
+
+		return *this;
 	}
 
 
+
 	/* Takes two values and returns the value of one value subtracted from the other */
-	/* works for all types, dosent work for rhs substantially larger than lhs*/
+	/* needs RHS check for overloading 1 still*/
 	Integer& Integer::operator-=(const Integer& i) {
 		Integer copyOfI = Integer(i);
 		int maxSize;
-
+		bool small = false;
+		int rhs = i.valueTotal();
+		int lhs = this->valueTotal();
+		if (lhs < rhs && this->posOrNeg && i.posOrNeg) {
+			small = true;
+			copyOfI = *this;
+			*this = i;
+			
+		}
 		// sets max size to what ever array is bigger
 		if (i.value.size() >= value.size()) {
 			maxSize = i.value.size() + 1;
@@ -131,17 +265,40 @@ namespace cosc326 {
 		value.insert(value.begin(), noAddValue, 0);
 		if (this->posOrNeg&&i.posOrNeg) {
 			// Does the math
-			for (int x = maxSize - 1; x >= 0; x--) {
-				int digitSum = value[x] - copyOfI.value[x];
-				if (digitSum < 0) {
-					value[x] = digitSum % 10;
-					if (x > 0) {
-						value[x - 1] += digitSum / 10;
+			if (!small) {
+				for (int x = maxSize - 1; x >= 0; x--) {
+
+					int digitSum = value[x] - copyOfI.value[x];
+					if (digitSum < 0) {
+						value[x] = 9;
+						if (x > 0) {
+							value[x - 1]--;
+						}
+						
+					}
+					else {
+						value[x] = digitSum;
 					}
 				}
-				else {
-					value[x] = digitSum;
+			}
+			else {
+				for (int x = 0;x < i.value.size()-1;x++) {
+					copyOfI.value.insert(copyOfI.value.begin(), 0);
 				}
+				for (int x = maxSize - 1; x >= 0; x--) {
+
+					int digitSum = value[x] - copyOfI.value[x];
+					if (digitSum < 0) {
+						value[x] = 10+digitSum % 10;
+						if (x > 0) {
+							value[x - 1]--;
+						}
+					}
+					else {
+						value[x] = digitSum;
+					}
+				}
+				this->posOrNeg = false;
 			}
 		}
 		else if (this->posOrNeg && !i.posOrNeg) {
@@ -199,10 +356,11 @@ namespace cosc326 {
 		}
 		
 		// If 0 in front gets rid of it.
-		if (value[0] == 0) {
-			value.erase(value.begin());
+		for (int i = 0;i < value.size();i++) {
+			if (value[0] == 0&&value.size()!=1) {
+				value.erase(value.begin());
+			}
 		}
-
 		return *this;
 	}
 
@@ -210,38 +368,107 @@ namespace cosc326 {
 	/* Takes two values and returns one multiplied by the other */
 	/* Not working yet but does have the idea kinda*/
 	Integer& Integer::operator*=(const Integer& i) {
+	
 
-		int y = 0;
+		
+		Integer y = Integer("1");
+		Integer one = Integer("1");
 		Integer out;
 		Integer other;
-		if (this->getValue() > i.getValue()) {
-			for (int x = 0;i.value.size();x++) {
-				y = (i.value[x]) + (y * 10);
-			}
+		Integer og;
+		if (*this > i) {
+
+				
+			
 			 other = Integer(*this);
+			 og = Integer(i);
+			 other.posOrNeg = true;
 		}
 		else {
-			for (int x = 0;i.value.size();x++) {
-				y = this->value[x] + (y * 10);
-			}
 			 other = Integer(i);
+			 og = Integer(*this);
+			 other.posOrNeg = true;
 		}
-		for (int x = 0;x < y;x++) {
-			out = out + other;
+		out = other;
+		while (y!=og) {
+			out += other;
+			y+=one;
 		}
-		return out;
+		if (!this->posOrNeg&&i.posOrNeg || !i.posOrNeg&&this->posOrNeg) {
+			this->posOrNeg = false;
+		}
+		else {
+			this->posOrNeg = true;
+		}
+
+
+		*this = out;
+		return *this;
 	}
 
 	/* Takes two values and returns one divided by the other */
 	Integer& Integer::operator/=(const Integer& i) {
-	//	value /= i.value;
+		Integer x = Integer(i);
+		Integer y = (*this);
+		Integer count = ("0");
+		Integer one = ("1");
+		while (x <= y) {
+			x += i;
+			count+=one;
+		}
+		
+		*this = count;
+		if (!this->posOrNeg && i.posOrNeg || !i.posOrNeg && this->posOrNeg) {
+			this->posOrNeg = false;
+		}
+		else {
+			this->posOrNeg = true;
+		}
 		return *this;
 	}
 
 	/* Takes two values and return the remainder */
 	Integer& Integer::operator%=(const Integer& i) {
 	//	value %= i.value;
-		return *this;
+		Integer zero = ("0");
+		Integer clone = *this;
+		clone /= i;
+		if (*this == zero||i ==zero) {
+			*this = zero;
+			return zero;
+
+		}
+		else {
+			Integer x = Integer(i);
+			Integer y = (*this);
+			Integer one = ("1");
+			while (x <= y) {
+				x += i;
+				if (x == y) {
+					*this = zero;
+					return *this;
+				}
+			}
+			if (x > *this) {
+				x -= i;
+			}
+			*this -=x;
+			if (!this->posOrNeg && i.posOrNeg || !i.posOrNeg && this->posOrNeg) {
+				this->posOrNeg = false;
+			}
+			else {
+				this->posOrNeg = true;
+			}
+
+
+			if (this->value[0] == 0&&this->value.size() >= 2) {
+				this->value.erase(this->value.begin());
+			}
+
+			return *this;
+		}
+
+
 	}
 
 	/* Takes two values and preforms addition */
@@ -280,8 +507,9 @@ namespace cosc326 {
 			out.operator-=(rhs);
 		}
 		else if (lhs.posOrNeg && !rhs.posOrNeg) {
-			out.operator+=(lhs);
+			out.operator-=(lhs);
 			out.operator-=(rhs);
+
 
 		}
 		else if (!lhs.posOrNeg && rhs.posOrNeg) {
@@ -297,26 +525,27 @@ namespace cosc326 {
 
 	/* Takes two values and multiplies them together */
 	Integer operator*(const Integer& lhs, const Integer& rhs) {
-		Integer out;
-		out.operator+=(lhs);
-		out.operator*=(rhs);
+		Integer out("1");
+		out*=(lhs);
+		out*=(rhs);
 		
 		return out;
 	}
 
 	/* Takes two values and divides one by the other*/
 	Integer operator/(const Integer& lhs, const Integer& rhs) {
-		Integer out;
+		Integer out=("1");
+		out.operator+=(lhs);
 		out.operator/=(rhs);
-		out.operator/=(lhs);
+		
 		return out;
 	}
 
 	/* Takes two values and finds the remainder */
 	Integer operator%(const Integer& lhs, const Integer& rhs) {
-		Integer out;
+		Integer out=("1");
+		out.operator+=(lhs);
 		out.operator%=(rhs);
-		out.operator%=(lhs);
 		return out;
 	}
 
@@ -345,84 +574,141 @@ namespace cosc326 {
 
 	/* Takes two values if rhs is greater then lhs returns True, otherwise returns False */
 	bool operator<(const Integer& lhs, const Integer& rhs) {
+		std::ostringstream oss1;
+		std::ostringstream oss2;
+
+		// Convert the vector of digits to string
+		for (int digit : lhs.getValue()) {
+			oss1 << digit;
+		}
+		for (int digit : rhs.getValue()) {
+			oss2 << digit;
+		}
+
+		std::string str1 = oss1.str();
+		std::string str2 = oss2.str();
+
 		if (!lhs.posOrNeg && rhs.posOrNeg) {
 			return true;
-		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return false;
-		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
-			return lhs.getValue() > rhs.getValue();
-		} else {
-			return lhs.getValue() < rhs.getValue();
 		}
+		else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false;
+		}
+
+		// Compare the string representations
+		if (str1.length() != str2.length()) {
+			return str1.length() < str2.length();
+		}
+
+		return str1 < str2;
 	}
 
 	/* Takes two values if lhs is greater then rhs returns True, otherwise returns False */
 	bool operator> (const Integer& lhs, const Integer& rhs) {
-		if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return true;
-		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
-			return false;
-		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
-			return lhs.getValue() < rhs.getValue();
-		} else {
-			return lhs.getValue() > rhs.getValue();
-		}
+		if (lhs < rhs)return false;
+		else return true;
+
 	}
 
 	/* Takes two values if rhs is less then or equal to lhs returns True, otherwise returns False */
 	bool operator<=(const Integer& lhs, const Integer& rhs) {
+		std::ostringstream oss1;
+		std::ostringstream oss2;
+
+		// Convert the vector of digits to string
+		for (int digit : lhs.getValue()) {
+			oss1 << digit;
+		}
+		for (int digit : rhs.getValue()) {
+			oss2 << digit;
+		}
+
+		std::string str1 = oss1.str();
+		std::string str2 = oss2.str();
+
 		if (!lhs.posOrNeg && rhs.posOrNeg) {
 			return true;
-		} else if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return false; 
-		} else if (!lhs.posOrNeg && ! rhs.posOrNeg) {
-			return lhs.getValue() >= rhs.getValue();
-		} else {
-			return lhs.getValue() <= rhs.getValue();
 		}
+		else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false;
+		}
+
+		// Compare the string representations
+		if (str1.length() != str2.length()) {
+			return str1.length() <= str2.length();
+		}
+
+		return str1 <= str2;
 	}
+
+
 
 	/* Takes two values if lhs is greater then or equal to rhs returns True, otherwise returns False */
 	bool operator>=(const Integer& lhs, const Integer& rhs) {
-		if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return true;
-		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
-			return false;
-		} else if (!lhs.posOrNeg && !rhs.posOrNeg) {
-			return lhs.getValue() <= rhs.getValue();
-		} else {
-			return lhs.getValue() >= rhs.getValue();
-		}
+		if (lhs < rhs)return false;
+		return true;
 	}
 
 	/* Takes two values returns True if they are equal */
 	bool operator==(const Integer& lhs, const Integer& rhs) {
-		if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return false;
-		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
-			return false;
-		} else {
-			return lhs.getValue() == rhs.getValue();
+		std::ostringstream oss1;
+		std::ostringstream oss2;
+
+		// Convert the vector of digits to string
+		for (int digit : lhs.getValue()) {
+			oss1 << digit;
 		}
+		for (int digit : rhs.getValue()) {
+			oss2 << digit;
+		}
+
+		std::string str1 = oss1.str();
+		std::string str2 = oss2.str();
+
+		if (!lhs.posOrNeg && rhs.posOrNeg) {
+			return true;
+		}
+		else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			return false;
+		}
+
+		// Compare the string representations
+		if (str1.length() != str2.length()) {
+			return false;
+		}
+
+		return str1 == str2;
 	}
 
 	/* Takes two values returns True if they are not equal */
 	bool operator!=(const Integer& lhs, const Integer& rhs) {
-		if (lhs.posOrNeg && !rhs.posOrNeg) {
-			return true;
-		} else if (!lhs.posOrNeg && rhs.posOrNeg) {
-			return true;
-		} else {
-			return lhs.getValue() != rhs.getValue();
-		}
+		if (lhs == rhs)return false;
+		else return true;
 	}
 
 	/* Takes two values and returns the greatest common divisor */
 	Integer gcd(const Integer& a, const Integer& b) {
-		if (operator==(b, Integer(0)) ) {
-			return a;
+		Integer div;
+		if (a > b) {
+			div = b;
 		}
-		return gcd(b, operator%(a, b));
+		else {
+			div = a;
+		}
+		Integer out=("0");
+		Integer zero = ("0");
+		Integer one = ("1");
+		bool go = true;
+		while (go){
+			if (div == zero)go = false;
+			if (a % div == zero && b%div==zero) {
+				out = div;
+				go = false;
+			}
+			div -= one;
+		}
+
+		return out;
 	}
 
 
