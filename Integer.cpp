@@ -82,13 +82,13 @@ namespace cosc326 {
 		bool less = false;
 		bool zeroFlip = false;
 		Integer clone;
-		if (this->valueTotal() < i.valueTotal()&& !this->posOrNeg && i.posOrNeg) {
+		if (*this < i && !this->posOrNeg && i.posOrNeg) {
 			less = true;
 			clone = *this;
 			*this = i;
 			clone.posOrNeg = true;
 		}
-		if (this->valueTotal() == i.valueTotal() && !this->posOrNeg && i.posOrNeg) {
+		if (*this == i && !this->posOrNeg && i.posOrNeg) {
 			zeroFlip = true;
 		}
 		// sets max size to what ever array is bigger
@@ -242,9 +242,7 @@ namespace cosc326 {
 		Integer copyOfI = Integer(i);
 		int maxSize;
 		bool small = false;
-		int rhs = i.valueTotal();
-		int lhs = this->valueTotal();
-		if (lhs < rhs && this->posOrNeg && i.posOrNeg) {
+		if (*this < i && this->posOrNeg && i.posOrNeg) {
 			small = true;
 			copyOfI = *this;
 			*this = i;
