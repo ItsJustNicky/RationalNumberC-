@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 namespace cosc326 {
@@ -15,15 +16,14 @@ namespace cosc326 {
 	private:
 		vector <int> value;
 		std::string stringValue;
-
+		
 	public:
-
-		bool posOrNeg; // true is positive, false is negative
-
+		
+		 // true is positive, false is negative 
+		bool posOrNeg;
 	    const std::vector<int>& getValue() const {
 			return value;
         }
-
 		Integer();                             // Integer i; // Default constructor declaration 
 		Integer(const Integer& i);             // Integer j(i); // Copy integer constructor declaration
 		Integer(const std::string& s);         // Integer k("123"); //  Constructor that takes a string of digits
@@ -47,7 +47,6 @@ namespace cosc326 {
 		// You may need to make some other functions friends, but do so sparingly.
 		friend bool operator<(const Integer& lhs, const Integer& rhs);
 		//friend std::ostream& operator<<(std::ostream& os, const Integer& i);
-	
 	private:
 		// Can add internal storage or methods here
 	};
