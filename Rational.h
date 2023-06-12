@@ -13,11 +13,21 @@ namespace cosc326 {
 	class Rational {
 
 	private:
-		int value;
+		vector <int> value;
+		vector<int> dec;
 		std::string stringValue;
     
 	public:
-
+		bool posOrNeg;
+		const std::vector<int>& getValue() const {
+			return value;
+		}
+		const std::vector<int>& getDec() const {
+			return dec;
+		}
+		void setPosOrNeg(bool in) {
+			posOrNeg = in;
+		}
 		Rational();
         Rational(const std::string& str);
         Rational(const Rational& r);
