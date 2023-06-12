@@ -18,6 +18,8 @@ namespace cosc326 {
 		std::string stringValue;
     
 	public:
+
+		// true is positive, false if negative 
 		bool posOrNeg;
 		const std::vector<int>& getValue() const {
 			return value;

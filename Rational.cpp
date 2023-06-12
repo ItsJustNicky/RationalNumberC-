@@ -2,12 +2,19 @@
 
 namespace cosc326 {
 
+	/* Sets the default value of Integer to 0 */
 	Rational::Rational() {
 		posOrNeg = true;
 		value.push_back(0);
 		dec.push_back(0);
 	}
 
+	/* Creates a copy of Integer */
+	Rational::Rational(const Rational& r) {
+		value = r.value;
+	}
+
+	/* Takes in a string and passes each individual item to a Integer Vector */
 	Rational::Rational(const std::string& s) {
 		std::string temp;
 		bool isDec = false;
@@ -50,10 +57,6 @@ namespace cosc326 {
 		}
 	}
 
-	Rational::Rational(const Rational& r) {
-		value = r.value;
-	}
-
 	Rational::Rational(const Integer& a) {
 		value = a.getValue();
 	}
@@ -88,10 +91,11 @@ namespace cosc326 {
 		dec = out.getValue();
 	}
 
+	/* Deconstructor */
 	Rational::~Rational() {
-
 	}
 
+	/* Takes a value and set value to that value */
 	Rational& Rational::operator=(const Rational& r) {
 		posOrNeg = r.posOrNeg;
 		value.clear();
@@ -100,19 +104,21 @@ namespace cosc326 {
 		return *this;
 	}
 
+	/* Takes a value and returns it as a negative */
 	Rational Rational::operator-() const {
-		
-		return *this;
+		Rational copy(*this);
+		copy.posOrNeg = !copy.posOrNeg;
+		return copy;
 	}
 
+	/* Takes a value and returns it as a positive */
 	Rational Rational::operator+() const {
-		return Rational(*this);
+    	return *this;
 	}
 
 	Rational& Rational::operator+=(const Rational& r) {
 		return *this;
 	}
-
 
 	Rational& Rational::operator-=(const Rational& r) {
 		return *this;

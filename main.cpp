@@ -14,7 +14,7 @@ int main() {
 
 	std::cout << "Kia ora World" << std::endl;
 	cosc326::Integer myInteger;
-	Integer a = Integer("-1");
+	Integer a = Integer("1");
 	std::cout << a << std::endl;
 	Integer b = Integer("3");
 	std::cout << b << std::endl;
@@ -30,5 +30,5 @@ int main() {
 	//std::cout << "----" << std::endl;
 	//std::cout << hmm << std::endl;
 	// std::cout << "eeeee" << std::endl;
-	return 0;
+	return 1;
 }
