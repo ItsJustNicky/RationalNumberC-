@@ -51,10 +51,10 @@ namespace cosc326 {
 	/* Takes a value and set value to that value */
 	/* Currently broken dosent pass negative properly*/
 	Integer& Integer::operator=(const Integer& i) {
-		
+		posOrNeg = i.posOrNeg;
 		value.clear();
 		value = i.value;
-
+		
 		return *this;
 	}
 
@@ -406,12 +406,22 @@ namespace cosc326 {
 
 	/* Takes two values and returns one divided by the other */
 	Integer& Integer::operator/=(const Integer& i) {
+		if (i > *this) {
+			Integer zero = Integer("0");
+			this->posOrNeg = true;
+			*this = zero;
+			return *this;
+
+		}
 		Integer x = Integer(i);
-		Integer y = (*this);
-		Integer count = ("0");
-		Integer one = ("1");
+		Integer iClone = Integer(i);
+		iClone.posOrNeg = true;
+		x.posOrNeg = true;
+		Integer y = Integer(*this);
+		Integer count = Integer("0");
+		Integer one = Integer("1");
 		while (x <= y) {
-			x += i;
+			x += iClone;
 			count+=one;
 		}
 		
@@ -532,9 +542,24 @@ namespace cosc326 {
 
 	/* Takes two values and divides one by the other*/
 	Integer operator/(const Integer& lhs, const Integer& rhs) {
-		Integer out=("1");
-		out.operator+=(lhs);
-		out.operator/=(rhs);
+		Integer out=("0");
+		Integer cloneLhs = (lhs);
+		Integer cloneRhs = (rhs);
+		if (!lhs.posOrNeg&&rhs.posOrNeg) {
+			out.posOrNeg = false;
+			cloneLhs.posOrNeg = true;
+		}
+		else if (lhs.posOrNeg && !rhs.posOrNeg) {
+			out.posOrNeg = false;
+			cloneRhs.posOrNeg = true;
+		}
+		else {
+			out.posOrNeg = true;
+			cloneLhs.posOrNeg = true;
+			cloneRhs.posOrNeg = true;
+		}
+		out.operator+=(cloneLhs);
+		out.operator/=(cloneRhs);
 		
 		return out;
 	}
