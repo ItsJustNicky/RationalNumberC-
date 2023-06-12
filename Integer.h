@@ -24,6 +24,15 @@ namespace cosc326 {
 	    const std::vector<int>& getValue() const {
 			return value;
         }
+		int concatenateIntegers(const std::vector<int>& nums) {
+			std::string concatenatedStr;
+
+			for (int num : nums) {
+				concatenatedStr += std::to_string(num);
+			}
+
+			return std::stoi(concatenatedStr);
+		}
 		Integer();                             // Integer i; // Default constructor declaration 
 		Integer(const Integer& i);             // Integer j(i); // Copy integer constructor declaration
 		Integer(const std::string& s);         // Integer k("123"); //  Constructor that takes a string of digits
