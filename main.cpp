@@ -3,7 +3,7 @@
 */
 
 #include "Integer.h"
-//#include "Rational.h"
+#include "Rational.h"
 #include <iostream>
 using namespace std;
 using namespace cosc326;

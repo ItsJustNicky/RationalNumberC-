@@ -1,4 +1,5 @@
 #include "Rational.h"
+#include "Integer.h"
 
 namespace cosc326 {
 
@@ -117,6 +118,10 @@ namespace cosc326 {
 	}
 
 	Rational& Rational::operator+=(const Rational& r) {
+		posOrNeg = r.posOrNeg;
+		value.clear();
+		//value += r.value;
+		//dec += r.dec;
 		return *this;
 	}
 
